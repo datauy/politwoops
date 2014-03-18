@@ -10,12 +10,11 @@ class Politician < ActiveRecord::Base
   attr_accessible :twitter_id, :user_name, :party_id, :status, :state, :account_type_id,
                   :office_id, :first_name, :middle_name, :last_name, :suffix
 
-  has_attached_file :avatar, { :path => ':base_path/avatars/:filename',
-                               :url => "/assets/avatars/:filename",
-                               :default_url => '/assets/avatar_missing_male.png' }
+  has_attached_file :avatar, { path: ':base_path/avatars/:filename',
+                               url: "/assets/avatars/:filename",
+                               default_url: '/assets/avatar_missing_male.png' }
 
   belongs_to :party
-
   belongs_to :office
     
   belongs_to :account_type
@@ -24,23 +23,23 @@ class Politician < ActiveRecord::Base
   has_many :deleted_tweets
  
   has_many :account_links
-  has_many :links, :through => :account_links 
+  has_many :links, through: :account_links 
    
-  #default_scope :order => 'user_name'
-
-  scope :active, :conditions => ["status = 1 OR status = 4"]
-  scope :collecting, :conditions => { :status => [CollectingAndShowing, CollectingNotShowing] }
-  scope :showing, :conditions => { :status => [NotCollectingOrShowing, NotCollectingButShowing] }
+  scope :active, conditions: ["status = 1 OR status = 4"]
+  scope :collecting, conditions: { status: [CollectingAndShowing, CollectingNotShowing] }
+  scope :showing, conditions: { status: [NotCollectingOrShowing, NotCollectingButShowing] }
   
-  validates_uniqueness_of :user_name, :case_sensitive => false
+  validates :user_name, uniqueness: { case_sensitive: false }
+  validates :user_name, presence: true
+  validates :party_id, presence: true
 
   comma do
     user_name              'user_name'
     twitter_id             'twitter_id'
-    party :display_name => 'party_name'
+    party    display_name: 'party_name'
     state                  'state'
-    office :title       => 'office_title'
-    account_type :name  => 'account_type'
+    office          title: 'office_title'
+    account_type    name:  'account_type'
     first_name             'first_name'
     middle_name            'middle_name'
     last_name              'last_name'
@@ -48,7 +47,7 @@ class Politician < ActiveRecord::Base
   end
 
   def full_name
-    return [office && office.abbreviation, first_name, last_name, suffix].join(' ').strip
+    [suffix, first_name, middle_name, last_name].join(' ').strip.gsub(/\s{2}/,' ')
   end
 
   def add_related_politicians (other_names)
@@ -65,10 +64,10 @@ class Politician < ActiveRecord::Base
     other_names.each do |other_name|
       if not other_name.empty? && other_name != self.user_name
         other_pol = Politician.find_by_user_name(other_name)
-        AccountLink.where(:politician_id => self.id,
-                          :link_id => other_pol.id).destroy_all
-        AccountLink.where(:link_id => self.id,
-                          :politician_id => other_pol.id).destroy_all
+        AccountLink.where(politician_id: self.id,
+                          link_id: other_pol.id).destroy_all
+        AccountLink.where(link_id: self.id,
+                          politician_id: other_pol.id).destroy_all
       end
     end
   end
@@ -78,34 +77,21 @@ class Politician < ActiveRecord::Base
 
     politician_ids = links.flat_map{ |l| [l.politician_id, l.link_id] }
                           .reject{ |pol_id| pol_id == self.id }
-    Politician.where(:id => politician_ids)
+    Politician.where(id: politician_ids)
   end
 
   def twoops
-    deleted_tweets.where(:approved => true)
+    deleted_tweets.where(approved: true)
   end
 
   def reset_avatar (options = {})
     begin
-      twitter_user = FactoryTwitterClient.new_client.user(user_name)
-      image_url = twitter_user.profile_image_url(:bigger)
-
+      image_url = twitter_image_url
       force_reset = options.fetch(:force, false)
 
-      if profile_image_url.nil? || (image_url != profile_image_url) || (profile_image_url != avatar.url) || force_reset
-        uri = URI::parse(image_url)
-        extension = File.extname(uri.path)
-
-        uri.open do |remote_file|
-          Tempfile.open(["#{self.twitter_id}_", extension]) do |tmpfile|
-            tmpfile.puts remote_file.read().force_encoding('UTF-8')
-            self.avatar = tmpfile
-            self.profile_image_url = image_url
-            self.save!
-          end
-        end
-      end
+      save_avatar(image_url) if should_reset_avatar(image_url, force_reset)
       return [true, nil]
+
     rescue Twitter::Error::Forbidden => e
       return [false, e.to_s]
     rescue Twitter::Error::NotFound
@@ -114,6 +100,30 @@ class Politician < ActiveRecord::Base
   end
 
   def party_logo_url
-    "/assets/party_flags/#{self.party.name}.png"
+    "/assets/party_flags/#{self.party.name}.png" unless Politwoops::Application.assets.find_asset("party_flags/#{self.party.name}.png").nil?
+  end
+
+  private
+
+  def twitter_image_url
+    twitter_user = FactoryTwitterClient.new_client.user(user_name).profile_image_url(:bigger)
+  end
+
+  def should_reset_avatar(image_url, force_reset)
+    profile_image_url.nil? || (image_url != profile_image_url) || (profile_image_url != avatar.url) || force_reset
+  end
+
+  def save_avatar(image_url)
+    uri = URI::parse(image_url)
+    extension = File.extname(uri.path)
+
+    uri.open do |remote_file|
+      Tempfile.open(["#{self.twitter_id}_", extension]) do |tmpfile|
+        tmpfile.puts remote_file.read().force_encoding('UTF-8')
+        self.avatar = tmpfile
+        self.profile_image_url = image_url
+        self.save!
+      end
+    end
   end
 end

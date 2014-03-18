@@ -1,20 +1,38 @@
 # encoding: utf-8
 class Party < ActiveRecord::Base
   has_many :politicians
+  before_save :prepare_name
+
+  validates :name, presence: true
 
   def tweets
-    Tweet.joins(:politician).where(:politicians => { :party_id => self.id })
+    Tweet.for_party(self.id)
   end
 
   def deleted_tweets
-    DeletedTweet.joins(:politician).where(:politicians => { :party_id => self.id })
+    DeletedTweet.for_party(self.id)
   end
 
   def twoops
-    DeletedTweet.joins(:politician).where(:approved => true, :politicians => { :party_id => self.id })
+    DeletedTweet.twoops.for_party(self.id)
   end
 
   def party_name
-    self.display_name || self.name
+    (self.display_name || self.name).titleize.gsub('-', ' ')
+  end
+
+  def self.by_name(name)
+    where(name: name).first
+  end
+
+  def self.active_politicians_of(name)
+    by_name(name).politicians.active
+  end
+
+  private
+
+  def prepare_name
+    self.display_name = self.display_name || self.name
+    self.name = self.name.parameterize
   end
 end

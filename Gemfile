@@ -29,12 +29,24 @@ group :assets do
 end
 
 # allows the app to be run with "bundle exec unicorn" in development
-group :development do
+group :development, :test do
   gem 'awesome_print'
   gem 'pry'
   gem 'pry_debug'
   gem 'unicorn'
   gem 'debugger'
+  gem "rspec-rails"
+end
+
+group :test do
+  gem 'factory_girl_rails'
+  gem 'faker'
+  gem 'vcr'
+  gem 'webmock', '1.15.2'
+  gem 'capybara'
+  gem 'poltergeist'
+  gem 'selenium-webdriver'
+  gem 'database_cleaner'
 end
 
 group :production do
