@@ -1,0 +1,110 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://acOp8hUCIGFUxLZu8AcnQw:lxGX6LIaau65ubdSloQ8FRdRlqU5SlRLUOdYhRjlgA@api.twitter.com/oauth2/token
+    body:
+      encoding: US-ASCII
+      string: grant_type=client_credentials
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Twitter Ruby Gem 5.7.1
+      Content-Type:
+      - application/x-www-form-urlencoded; charset=UTF-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Cache-Control:
+      - no-cache, no-store, must-revalidate, pre-check=0, post-check=0
+      Content-Length:
+      - '144'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 19 Mar 2014 20:55:56 GMT
+      Etag:
+      - ! '"0aea92d9b31e250837cd4876cdae662d"'
+      Expires:
+      - Tue, 31 Mar 1981 05:00:00 GMT
+      Last-Modified:
+      - Wed, 19 Mar 2014 20:55:56 GMT
+      Pragma:
+      - no-cache
+      Server:
+      - tfe
+      Set-Cookie:
+      - _twitter_sess=BAh7CDoPY3JlYXRlZF9hdGwrCOIKIdxEAToMY3NyZl9pZCIlN2U0M2M3NzM4%250AYWQ1MGU0MjQyOTE3MjU0OTU5M2U2ZGM6B2lkIiU1YjAyYjFkOTQ1Y2QyM2Mx%250ANjI0OTUxNjdlM2U5OTA0MA%253D%253D--520a705107aa7ed3a5034a0824f10015cd529590;
+        domain=.twitter.com; path=/; secure; HttpOnly
+      - guest_id=v1%3A139526255685413511; Domain=.twitter.com; Path=/; Expires=Fri,
+        18-Mar-2016 20:55:56 UTC
+      Status:
+      - 200 OK
+      Strict-Transport-Security:
+      - max-age=631138519
+      Vary:
+      - Accept-Encoding
+      X-Frame-Options:
+      - DENY
+      X-Mid:
+      - 025bde848de0b72c4e5d339abbe9b6fed2ad5e55
+      X-Runtime:
+      - '0.02491'
+      X-Transaction:
+      - f73e2fdd9ad0945f
+      X-Ua-Compatible:
+      - IE=edge,chrome=1
+      X-Xss-Protection:
+      - 1; mode=block
+    body:
+      encoding: US-ASCII
+      string: ! '{"token_type":"bearer","access_token":"AAAAAAAAAAAAAAAAAAAAAMaKSQAAAAAAMrov5UncxeqVfKpXLODhxf1rqNA%3DENPsY0va3PGu1KX3LDn8z617OzYXRWsVNwNjOFauQ"}'
+    http_version: 
+  recorded_at: Wed, 19 Mar 2014 20:55:56 GMT
+- request:
+    method: get
+    uri: https://api.twitter.com/1.1/account/verify_credentials.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - Twitter Ruby Gem 5.7.1
+      Authorization:
+      - Bearer AAAAAAAAAAAAAAAAAAAAAMaKSQAAAAAAMrov5UncxeqVfKpXLODhxf1rqNA%3DENPsY0va3PGu1KX3LDn8z617OzYXRWsVNwNjOFauQ
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 403
+      message: Forbidden
+    headers:
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '106'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 19 Mar 2014 20:55:57 UTC
+      Server:
+      - tfe
+      Set-Cookie:
+      - guest_id=v1%3A139526255769421324; Domain=.twitter.com; Path=/; Expires=Fri,
+        18-Mar-2016 20:55:57 UTC
+      Strict-Transport-Security:
+      - max-age=631138519
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAAAzLMQqAMAwAwK+EzA7SsT8RcQhp0EJtIIk4FP9u97uBYqbm
+        mPeBt7jTKZhx08eATYr0qNQcikLXAGpNXyDmKSEU4qoOJj45Cy7IWmZPaf2O
+        7wcAAP//AwAKlpgIWwAAAA==
+    http_version: 
+  recorded_at: Wed, 19 Mar 2014 20:55:57 GMT
+recorded_with: VCR 2.8.0

@@ -27,6 +27,18 @@ $(document).ready(function() {
 
   $('.edit-input').on('click', function() {
     var formGroup = $(this).parentsUntil('.form-group').parent();
+    var elementValue = ""
+
+    formGroup.find('.input-controls input[type="text"]').each(function(index, element) {
+      if (element.value != "" || element.value != null) {
+        elementValue += element.value + " "
+      }
+    });
+
+    if (elementValue != "") {
+      formGroup.find('.display-label > span').text(elementValue.trim());
+    }
+    
     formGroup.find('.display-label').toggle()
     formGroup.find('.input-controls').toggle()
   });

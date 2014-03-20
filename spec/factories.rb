@@ -9,6 +9,7 @@ FactoryGirl.define do
     middle_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
     suffix 'Mr.'
+    gender 'H'
     party
 
     trait :montevideo do

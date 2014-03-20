@@ -7,8 +7,10 @@ class Politician < ActiveRecord::Base
   NotCollectingOrShowing = 3
   NotCollectingButShowing = 4
 
+  before_validation :upcase_gender
+
   attr_accessible :twitter_id, :user_name, :party_id, :status, :state, :account_type_id,
-                  :office_id, :first_name, :middle_name, :last_name, :suffix
+                  :office_id, :first_name, :middle_name, :last_name, :suffix, :gender
 
   has_attached_file :avatar, { path: ':base_path/avatars/:filename',
                                url: "/assets/avatars/:filename",
@@ -32,6 +34,7 @@ class Politician < ActiveRecord::Base
   validates :user_name, uniqueness: { case_sensitive: false }
   validates :user_name, presence: true
   validates :party_id, presence: true
+  validates :gender, inclusion: ['H', 'M'], allow_nil: true
 
   comma do
     user_name              'user_name'
@@ -46,16 +49,25 @@ class Politician < ActiveRecord::Base
     suffix                 'suffix'
   end
 
+  def self.by_username(username)
+    Politician.where(user_name: username)
+  end
+
+  def self.duplicated_username?(username, id)
+    !by_username(username).where("id != ?", id).empty?
+  end
+
   def full_name
     [suffix, first_name, middle_name, last_name].join(' ').strip.gsub(/\s{2}/,' ')
   end
 
   def add_related_politicians (other_names)
     other_names.each do |other_name|
-      if not other_name.empty? && other_name != self.user_name
-        other_pol = Politician.find_by_user_name(other_name)
-        self.links << other_pol
-        self.save!
+      if other_name != self.user_name
+        if other_pol = Politician.find_by_user_name(other_name)
+          self.links << other_pol
+          self.save!
+        end
       end
     end
   end
@@ -72,12 +84,19 @@ class Politician < ActiveRecord::Base
     end
   end
 
-  def get_related_politicians()
+  def get_related_politicians
     links = AccountLink.where("politician_id = ? or link_id = ?", self.id, self.id)
 
     politician_ids = links.flat_map{ |l| [l.politician_id, l.link_id] }
                           .reject{ |pol_id| pol_id == self.id }
     Politician.where(id: politician_ids)
+  end
+
+  def relate_politicians(related)
+    requested_names = Set.new(related.split(',').map(&:strip))
+    existing_names = Set.new(get_related_politicians.map(&:user_name))
+    remove_related_politicians (existing_names - requested_names)
+    add_related_politicians (requested_names - existing_names)
   end
 
   def twoops
@@ -125,5 +144,9 @@ class Politician < ActiveRecord::Base
         self.save!
       end
     end
+  end
+
+  def upcase_gender
+    self[:gender].upcase! if self[:gender]
   end
 end

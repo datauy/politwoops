@@ -1,7 +1,10 @@
+# encoding: utf-8
 class Admin::PoliticiansController < Admin::AdminController 
   include ApplicationHelper
 
-  def admin_list
+  before_filter :prepare_politician, only: [:create, :update]
+
+  def index
     @per_page_options = [10, 20, 50]
     @per_page = closest_value((params.fetch :per_page, 0).to_i, @per_page_options)
     @page = [params[:page].to_i, 1].max
@@ -15,93 +18,70 @@ class Admin::PoliticiansController < Admin::AdminController
     end
   end
 
-  def admin_user
+  def show
     @politician = Politician.find(params[:id]) || raise("not found")
-    @parties = Party.all
-    @offices = Office.all
-    @account_types = AccountType.all
+    common_form_elements_for('edit', :put)
+    @path_to_use = admin_user_path(@politician.id)
     @related = @politician.get_related_politicians().sort_by(&:user_name)
     
-    @unmoderated = DeletedTweet.where(:reviewed=>false, :politician_id => @politician).length
- 
     respond_to do |format|
-      format.html { render }
+      format.html { render 'form.html' }
     end
   end
 
-  def new_user
-    @parties = Party.all
-    @offices = Office.all
-    @account_types = AccountType.all
+  def new
+    @politician = Politician.new
+    common_form_elements_for('new', :post)
+    @path_to_use = admin_users_path
+    @related = []
 
     respond_to do |format|
-      format.html { render }
+      format.html { render 'form.html' }
     end
   end
 
-  def get_twitter_id
-    @twitter_id = FactoryTwitterClient.new_client.user(params[:screen_name])
-    render json: {twitter_id: @twitter_id}
-  end 
+  def create
+    twitter = FactoryTwitterClient.new_client.user(params[:user_name])
+    @politician = Politician.create(twitter_id: twitter.id, user_name: params.delete(:user_name))
+    update_politician(new_admin_user_path)
+  end
 
-  def save_user
-    if params[:id] == '0' then
-      existing = Politician.where(:user_name => params[:user_name])
-      if existing.count == 0
-        #it's a new add
-        pol = Politician.create(:twitter_id => params[:twitter_id],
-                                :user_name => params[:user_name])
-      else
-        flash[:error] = "We already track @#{params[:user_name]}"
-        pol = nil
-      end
+  def update
+    if @politician
+      update_politician(admin_user_path(@politician.id))
     else
-      pol = Politician.find(params[:id]) || raise("not found")
-      pol.user_name = params[:user_name]
+      flash[:error] = "No existe el político que buscas"
+      redirect_to :index
     end
+  end
+  
+  def update_politician(user_path)
+    if @politician.update_attributes(params)
+      @politician.reset_avatar
+      @politician.relate_politicians(params[:related]) if params[:related]
 
-    if not pol.nil?
-      pol.party = Party.find(params[:party_id])
-      pol.status = params[:status]
-      if params[:account_type_id] == '0' then
-        pol.account_type = nil
-      else
-        pol.account_type = AccountType.find(params[:account_type_id])
-      end
-      if params[:office_id] == '0' then
-        pol.office = nil
-      else
-        pol.office = Office.find(params[:office_id])
-      end
-
-      pol.update_attributes(params)
-      
-      pol.save!
-      pol.reset_avatar
+      redirect_to admin_user_path(@politician.id)
+    else
+      flash[:errors] = @politician.errors
+      redirect_to user_path, status: 500
     end
-
-    if params[:unapprove_all] and params[:unapprove_all] == 'on' then
-        unmod = DeletedTweet.where(:reviewed=>false, :politician_id => pol)
-        unmod.each do |utweet|
-            utweet.approved = 0
-            utweet.review_message = "Bulk unapproved in admin"
-            utweet.reviewed = 1
-            utweet.reviewed_at = Time.now 
-            utweet.save()
-
-        end
-    end
-
-    if params[:related] then
-      requested_names = Set.new(params[:related].split(',')
-                                                .map(&:strip)
-                                                .reject{ |name| name == '' })
-      existing_names = Set.new(pol.get_related_politicians.map(&:user_name))
-      pol.remove_related_politicians (existing_names - requested_names)
-      pol.add_related_politicians (requested_names - existing_names)
-    end
-
-    redirect_to :back
   end
 
+  private
+
+  def prepare_politician
+    if Politician.duplicated_username?(params[:user_name], params[:id])
+      flash[:error] = "Ya existe ese usuario de twitter"
+      return redirect_to admin_user_path(params[:id]), status: 400
+    else
+      @politician = Politician.find(params[:id]) if params[:id]
+    end
+  end
+
+  def common_form_elements_for(action, method)
+    @parties = Party.all
+    @use_form_elements = "#{action}_form_elements"
+    @method_to_use = method
+    @gender = @politician.gender || 'M'
+  end
 end

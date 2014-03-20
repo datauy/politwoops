@@ -3,6 +3,7 @@ require 'spec_helper'
 describe 'Politician' do
 
   let(:politician) { Politician.last }
+  let(:party) { FactoryGirl.create :party }
 
   describe 'validations' do
 
@@ -21,6 +22,38 @@ describe 'Politician' do
     it 'should not allow if politician has empty party' do
       new_politician = Politician.new(user_name: 'foobar', party: nil)
       new_politician.valid?.should eq false
+    end
+
+    context 'Gender' do
+      it 'should allow only H for gender' do
+        male_politician = Politician.new(user_name: 'foobar', party_id: party.id, gender: 'H')
+        male_politician.valid?.should eq true
+      end
+
+      it 'should allow only M for gender' do
+        female_politician = Politician.new(user_name: 'foobar', party_id: party.id, gender: 'M')
+        female_politician.valid?.should eq true
+      end
+
+      it 'should allow only h for gender' do
+        male_politician = Politician.new(user_name: 'foobar', party_id: party.id, gender: 'h')
+        male_politician.valid?.should eq true
+      end
+
+      it 'should allow only m for gender' do
+        female_politician = Politician.new(user_name: 'foobar', party_id: party.id, gender: 'm')
+        female_politician.valid?.should eq true
+      end
+
+      it 'should allow only H/M for gender' do
+        new_politician = Politician.new(user_name: 'foobar', party_id: party.id, gender: 'Hombre')
+        new_politician.valid?.should eq false
+      end
+
+      it 'should allow blank for gender' do
+        female_politician = Politician.new(user_name: 'foobar', party_id: party.id)
+        female_politician.valid?.should eq true
+      end
     end
   end
 
@@ -67,6 +100,30 @@ describe 'Politician' do
 
     it 'should belong to a party' do
       politician.party.name.should eq Party.last.name
+    end
+  end
+
+  describe 'related links' do
+    let(:politician1) { FactoryGirl.create :politician }
+    let(:politician2) { FactoryGirl.create :politician }
+    let(:politician3) { FactoryGirl.create :politician }
+
+    it 'should add existent politicias as related' do
+      politician1.add_related_politicians([politician2.user_name, politician3.user_name])
+      politician1.reload
+      politician1.links.count.should eq 2
+    end
+
+    it 'should not add inexistent politicias as related' do
+      politician1.add_related_politicians([politician2.user_name, 'foobar'])
+      politician1.reload
+      politician1.links.count.should eq 1
+    end
+
+    it 'should not add empty string' do
+      politician1.add_related_politicians([politician2.user_name, 'foobar', ""])
+      politician1.reload
+      politician1.links.count.should eq 1
     end
   end
 end

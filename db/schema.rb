@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140306205157) do
+ActiveRecord::Schema.define(:version => 20140318155022) do
 
   create_table "account_links", :force => true do |t|
     t.integer  "politician_id"
@@ -83,6 +83,7 @@ ActiveRecord::Schema.define(:version => 20140306205157) do
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
+    t.string   "gender"
   end
 
   add_index "politicians", ["status"], :name => "index_politicians_on_status"

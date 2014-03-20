@@ -1,0 +1,57 @@
+<div class="row politician-info">
+  <div class="col-md-11 col-md-offset-1">
+    <%=form_tag(@path_to_use, method: @method_to_use, role: "form", class: "form", id: "admin-politician") do %>
+
+      <%= render partial: @use_form_elements %>
+
+      <div class="form-group">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="gender">Género</label>
+            <%= select_tag "gender", options_for_select(["H", "M"], @gender) %>
+          </div>
+          <div class="col-md-6">
+            <label for="party">Partido</label>
+            <select id="party" name="party_id">
+              <% @parties.each do |party| %>
+                <option value="<%=party.id%>" <% if party == @politician.party then %> selected <% end %> > 
+                  <%=party.name.upcase %>
+                </option>
+              <% end %>
+            </select>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <label for="state">Departamento</label>
+        <input id="state" type="text" name="state" class="form-control" value="<%=@politician.state %>" />
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" name="status">
+          <% [1, 2, 3, 4].each do |stat| %>
+            <option value="<%=stat%>" <% if stat == @politician.status %> selected <% end %> >
+              <%= stat %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="related-accounts">Cuentas Relacionadas</label>
+        <input id="related-accounts" type="text" name="related" class="form-control" value="<% @related.each do |r| %><%=r.user_name%>,<% end %> " /></span>
+      </div>
+
+      <button type="submit" class="btn btn-default" value="Save">Save</button>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-11 col-md-offset-1">
+    <span><em> Status Key: <div><div> 1 = Active, showing tweets</div><div> 2 = Collecting tweets, not showing</div><div> 3 = Not collecting or showing tweets</div><div> 4 = not collecting, but showing historical tweets</div></div></em></span>
+  </div>
+</div>
