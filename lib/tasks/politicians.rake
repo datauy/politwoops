@@ -7,6 +7,20 @@ class ImportPoliticians
     @twitter_user_ids = {}
   end
 
+  def update_gender_from_csv(separator)
+    CSV.foreach(ENV['CSV'], headers: true, col_sep: separator) do |row|
+      twitter_user = row['Twitter_ID'].downcase.gsub(/^(http\:\/\/)?(www\.)?twitter\.com\/?(\/|\@)?/, '').gsub(/\/*$/, '').strip
+      gender = row['Genero'] || 'M'
+
+      politician = Politician.where(user_name: twitter_user).first
+
+      if politician
+        politician.gender = gender
+        politician.save
+      end
+    end
+  end
+
   def import_from_csv(separator)
     CSV.foreach(ENV['CSV'], headers: true, col_sep: separator) do |row|
       name = row['Nombre'].split.reverse
@@ -114,6 +128,15 @@ namespace :politicians do
     separator = ENV['CSV_SEP'].present? ? ENV['CSV_SEP'] : ','
 
     import_politicians.import_from_csv(separator)
+  end
+
+  desc 'Update CSV politicians with gender'
+  task update_gender: :environment do
+    require 'csv'
+    
+    import_politicians = ImportPoliticians.new
+    separator = ENV['CSV_SEP'].present? ? ENV['CSV_SEP'] : ','
+    import_politicians.update_gender_from_csv(separator)
   end
 
   desc 'Import A CSV file with twitter user plus party indications.'
