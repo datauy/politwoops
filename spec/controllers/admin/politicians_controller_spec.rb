@@ -14,13 +14,13 @@ describe Admin::PoliticiansController do
     end
 
     it 'should not allow to update username if it does not exist' do
-      put :update, {id: politician.id, user_name: 'foobar'}
+      put :update, {id: politician.id, politician: {user_name: 'foobar'}}
       response.status.should eq 400
     end
 
     it 'should allow to update username if it exist' do
       VCR.use_cassette('twitter_user_info', allow_playback_repeats: true) do
-        put :update, {id: politician.id, user_name: 'diablo_urbano'}
+        put :update, {id: politician.id, politician: {user_name: 'diablo_urbano'}}
       end
       politician.reload
       politician.user_name.should eq 'diablo_urbano'
@@ -28,9 +28,9 @@ describe Admin::PoliticiansController do
 
     it 'should allow to update any attribute' do
       VCR.use_cassette('twitter_user_info', allow_playback_repeats: true) do
-        put :update, {id: politician.id, party_id: party.id,
+        put :update, {id: politician.id, politician: {party_id: party.id,
           first_name: 'foo', last_name: 'bar', user_name: 'diablo_urbano'
-        }
+        }}
       end
       politician.reload
 
@@ -40,8 +40,8 @@ describe Admin::PoliticiansController do
 
     it 'should allow to update related_links' do
       VCR.use_cassette('twitter_user_info', allow_playback_repeats: true) do
-        put :update, {id: politician.id, user_name: 'diablo_urbano',
-                      related: 'foobar, testbar, testfoo'}
+        put :update, {id: politician.id, politician: {user_name: 'diablo_urbano',
+                      related: 'foobar, testbar, testfoo'}}
       end
       politician.reload
 
@@ -55,22 +55,21 @@ describe Admin::PoliticiansController do
     end
 
     it 'should not allow to create if it exist' do
-      post :create, {id: politician.id, user_name: 'foobar'}
+      post :create, {id: politician.id, politician: {user_name: 'foobar'}}
       response.status.should eq 400
     end
 
     it 'should allow to create if it does not exist' do
       VCR.use_cassette('twitter_user_info', allow_playback_repeats: true) do
-        post :create, {user_name: 'diablo_urbano', party_id: party.id}
+        post :create, {politician: {user_name: 'diablo_urbano', party_id: party.id}}
       end
       Politician.last.user_name.should eq 'diablo_urbano'
     end
 
     it 'should allow to create any attribute' do
       VCR.use_cassette('twitter_user_info', allow_playback_repeats: true) do
-        post :create, {party_id: party.id, user_name: 'diablo_urbano',
-                       first_name: 'foo', last_name: 'bar'
-        }
+        post :create, {politician: {party_id: party.id, user_name: 'diablo_urbano',
+                       first_name: 'foo', last_name: 'bar'}}
       end
 
       Politician.last.first_name.should eq 'foo'
@@ -79,9 +78,8 @@ describe Admin::PoliticiansController do
 
     it 'should allow to create related_links' do
       VCR.use_cassette('twitter_user_info', allow_playback_repeats: true) do
-        post :create, {user_name: 'diablo_urbano', party_id: party.id,
-                       related: 'foobar, testbar, testfoo'
-        }
+        post :create, {politician: {user_name: 'diablo_urbano', party_id: party.id,
+                       related: 'foobar, testbar, testfoo'}}
       end
 
       Politician.by_username('diablo_urbano').first.links.count.should eq 1

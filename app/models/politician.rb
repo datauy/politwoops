@@ -30,11 +30,13 @@ class Politician < ActiveRecord::Base
   scope :active, conditions: ["status = 1 OR status = 4"]
   scope :collecting, conditions: { status: [CollectingAndShowing, CollectingNotShowing] }
   scope :showing, conditions: { status: [NotCollectingOrShowing, NotCollectingButShowing] }
+  scope :male, conditions: { gender: 'M' }
+  scope :female, conditions: { gender: 'F' }
   
   validates :user_name, uniqueness: { case_sensitive: false }
   validates :user_name, presence: true
   validates :party_id, presence: true
-  validates :gender, inclusion: ['H', 'M'], allow_nil: true
+  validates :gender, inclusion: ['H', 'M'], allow_blank: true
 
   comma do
     user_name              'user_name'
@@ -116,10 +118,6 @@ class Politician < ActiveRecord::Base
     rescue Twitter::Error::NotFound
       return [false, "No such user name: #{user_name}"]
     end
-  end
-
-  def party_logo_url
-    "/assets/party_flags/#{self.party.name}.png" unless Politwoops::Application.assets.find_asset("party_flags/#{self.party.name}.png").nil?
   end
 
   private

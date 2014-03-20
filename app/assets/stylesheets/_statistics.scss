@@ -1,0 +1,60 @@
+.by-party {
+  .section {
+    .group-count {
+      font-size: 20px;
+    }
+
+    .male {
+      background-color: $light-blue;
+    }
+
+    .female {
+      background-color: $blue;
+    }
+
+    .organization {
+      background-color: $dark-gray;
+    }
+
+    .gender-separation {
+
+      .bar {
+        float: left;
+        height: 30px;
+
+        &.organization {
+          border-radius: 10px 0 0 10px;
+        }
+
+        &.male {
+          border-radius: 0 10px 10px 0;
+        }
+      }
+    }
+
+    .gender-detail {
+      padding-top: 40px;
+
+      .circle {
+        border-radius: 15px;
+        height: 25px;
+        width: 25px;
+        float: left;
+        margin-right: 10px;
+      }
+    }
+
+    .tweets-statistics {
+      font-size: 16px;
+      font-weight: bold;
+
+      .written {
+        color: $black;
+      }
+
+      .deleted {
+        color: $red;
+      }
+    }
+  }
+}

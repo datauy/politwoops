@@ -41,7 +41,7 @@ describe 'Admin::Politicians' do
     it 'should keep new values for user_name', js: true do
       within('form#admin-politician') do
         find('.username .display-label a.edit-input').click
-        fill_in 'user_name', with: 'foobar'
+        fill_in 'politician[user_name]', with: 'foobar'
         find('.username .input-controls a.edit-input').click
         find('.username .display-label').text.should eq 'foobar'
       end

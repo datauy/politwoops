@@ -58,4 +58,11 @@ module TweetsHelper
     time.strftime "%a, %d %b %Y %H:%M:%S %z"
   end
 
+  def display_percentage(percentage)
+    if percentage == 0.0 || percentage.nan?
+      ""
+    else
+      "(#{percentage}%)"
+    end
+  end
 end

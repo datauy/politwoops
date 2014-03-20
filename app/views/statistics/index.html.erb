@@ -1,0 +1,40 @@
+<div class="by-party">
+  <h2 class="statistics-by-party">Estadísticas por partido/gobierno</h2>
+  <% @parties.each do |party| %>
+    <div class='row section'>
+      <div class="col-md-2">
+        <img src="<%= party.party_logo_url %>" class="politician-party" alt="<%= party.name %>" />
+      </div>
+
+      <div class="col-md-7">
+        <p class="group-count"><%= party.active_politicians.count %> cuentas monitoreadas</p>
+        <div class="gender-separation">
+          <% party_distribution = party.organization_percentage %>
+          <div class="bar organization" style="width:<%= party_distribution[:organization] %>%"></div>
+          <div class="bar female" style="width:<%= party_distribution[:female] %>%"></div>
+          <div class="bar male" style="width:<%= party_distribution[:male] %>%"></div>
+        </div>
+        <div class="row gender-detail">
+          <div class="col-md-4">
+            <div class="circle organization"></div><span>Organización</span>
+          </div>
+          <div class="col-md-4">
+            <div class="circle female"></div><span>Mujeres</span>
+          </div>
+          <div class="col-md-4">
+            <div class="circle male"></div><span>Hombres</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 tweets-statistics">
+        <p class='written'>
+        <%= party.tweets_count %> tweets
+        </p>
+        <p class='deleted'>
+        <%= party.deleted_tweets_count %> borrados <%= display_percentage(party.deleted_tweets_percentage) %>
+        </p>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -8,11 +8,11 @@
         <div class="row">
           <div class="col-md-6">
             <label for="gender">Género</label>
-            <%= select_tag "gender", options_for_select(["H", "M"], @gender) %>
+            <%= select_tag "politician[gender]", options_for_select({"H" => "H", "M" => "M", "Org" => nil}, @gender)  %>
           </div>
           <div class="col-md-6">
             <label for="party">Partido</label>
-            <select id="party" name="party_id">
+            <select id="party" name="politician[party_id]">
               <% @parties.each do |party| %>
                 <option value="<%=party.id%>" <% if party == @politician.party then %> selected <% end %> > 
                   <%=party.name.upcase %>
@@ -26,12 +26,12 @@
 
       <div class="form-group">
         <label for="state">Departamento</label>
-        <input id="state" type="text" name="state" class="form-control" value="<%=@politician.state %>" />
+        <input id="state" type="text" name="politician[state]" class="form-control" value="<%=@politician.state %>" />
       </div>
 
       <div class="form-group">
         <label for="status">Status</label>
-        <select id="status" name="status">
+        <select id="status" name="politician[status]">
           <% [1, 2, 3, 4].each do |stat| %>
             <option value="<%=stat%>" <% if stat == @politician.status %> selected <% end %> >
               <%= stat %>
@@ -42,7 +42,7 @@
 
       <div class="form-group">
         <label for="related-accounts">Cuentas Relacionadas</label>
-        <input id="related-accounts" type="text" name="related" class="form-control" value="<% @related.each do |r| %><%=r.user_name%>,<% end %> " /></span>
+        <input id="related-accounts" type="text" name="politician[related]" class="form-control" value="<% @related.each do |r| %><%=r.user_name%>,<% end %> " /></span>
       </div>
 
       <button type="submit" class="btn btn-default" value="Save">Save</button>

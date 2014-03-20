@@ -10,7 +10,7 @@
       </span>
       <div class="row input-controls">
         <div class="col-md-11">
-          <input id="user_name_input" type="text" name="user_name" value="<%= @politician.user_name %>" class="form-control" />
+          <input id="user_name_input" type="text" name="politician[user_name]" value="<%= @politician.user_name %>" class="form-control" />
         </div>
         <div class="col-md-1">
           <a class="edit-input"><span class="glyphicon glyphicon-ok"></span></a>
@@ -26,13 +26,13 @@
   </h3>
   <div id="display-name" class="row input-controls">
     <div class="col-md-4">
-      <input id="first_name_input" type="text" name="first_name" value="<%= @politician.first_name %>" placeholder="Primer nombre" class="form-control input-text" />
+      <input id="first_name_input" type="text" name="politician[first_name]" value="<%= @politician.first_name %>" placeholder="Primer nombre" class="form-control input-text" />
     </div>
     <div class="col-md-3">
-      <input id="middle_name_input" type="text" name="middle_name" value="<%= @politician.middle_name %>" placeholder="Segundo nombre" class="form-control input-text" />
+      <input id="middle_name_input" type="text" name="politician[middle_name]" value="<%= @politician.middle_name %>" placeholder="Segundo nombre" class="form-control input-text" />
     </div>
     <div class="col-md-4">
-      <input id="last_name_input" type="text" name="last_name" value="<%= @politician.last_name %>" placeholder="Apellido nombre" class="form-control input-text" />
+      <input id="last_name_input" type="text" name="politician[last_name]" value="<%= @politician.last_name %>" placeholder="Apellido nombre" class="form-control input-text" />
     </div>
     <div class="col-md-1">
       <a class="edit-input"><span class="glyphicon glyphicon-ok"></span></a>

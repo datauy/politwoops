@@ -25,7 +25,7 @@ class Admin::PoliticiansController < Admin::AdminController
     @related = @politician.get_related_politicians().sort_by(&:user_name)
     
     respond_to do |format|
-      format.html { render 'form.html' }
+      format.html { render 'form' }
     end
   end
 
@@ -36,13 +36,13 @@ class Admin::PoliticiansController < Admin::AdminController
     @related = []
 
     respond_to do |format|
-      format.html { render 'form.html' }
+      format.html { render 'form' }
     end
   end
 
   def create
-    twitter = FactoryTwitterClient.new_client.user(params[:user_name])
-    @politician = Politician.create(twitter_id: twitter.id, user_name: params.delete(:user_name))
+    twitter = FactoryTwitterClient.new_client.user(params[:politician][:user_name])
+    @politician = Politician.create(twitter_id: twitter.id, user_name: params[:politician].delete(:user_name))
     update_politician(new_admin_user_path)
   end
 
@@ -56,9 +56,11 @@ class Admin::PoliticiansController < Admin::AdminController
   end
   
   def update_politician(user_path)
-    if @politician.update_attributes(params)
+    related = params[:politician].delete(:related)
+
+    if @politician.update_attributes(params[:politician])
       @politician.reset_avatar
-      @politician.relate_politicians(params[:related]) if params[:related]
+      @politician.relate_politicians(related) if related
 
       redirect_to admin_user_path(@politician.id)
     else
@@ -70,7 +72,7 @@ class Admin::PoliticiansController < Admin::AdminController
   private
 
   def prepare_politician
-    if Politician.duplicated_username?(params[:user_name], params[:id])
+    if Politician.duplicated_username?(params[:politician][:user_name], params[:id])
       flash[:error] = "Ya existe ese usuario de twitter"
       return redirect_to admin_user_path(params[:id]), status: 400
     else
@@ -82,6 +84,6 @@ class Admin::PoliticiansController < Admin::AdminController
     @parties = Party.all
     @use_form_elements = "#{action}_form_elements"
     @method_to_use = method
-    @gender = @politician.gender || 'M'
+    @gender = @politician.gender || nil
   end
 end
