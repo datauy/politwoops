@@ -102,7 +102,7 @@ class Politician < ActiveRecord::Base
   end
 
   def twoops
-    deleted_tweets.where(approved: true)
+    deleted_tweets.twoops
   end
 
   def reset_avatar (options = {})
@@ -118,6 +118,18 @@ class Politician < ActiveRecord::Base
     rescue Twitter::Error::NotFound
       return [false, "No such user name: #{user_name}"]
     end
+  end
+
+  def tweets_count
+    self.tweets.count
+  end
+
+  def deleted_tweets_count
+    twoops.count
+  end
+
+  def deleted_tweets_percentage
+    ((deleted_tweets_count.to_f * 100) / tweets_count.to_f).round(2)
   end
 
   private

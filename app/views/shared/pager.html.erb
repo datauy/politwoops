@@ -1,7 +1,7 @@
 <div class="row pagination-pager">
   <div class="col-md-6">
     <div id="pager">
-      <%= will_paginate @tweets, :next_label => t(:next, :scope => [:politwoops]), :previous_label => t(:previous, :scope => [:politwoops]) %>
+      <%= will_paginate collection, :next_label => t(:next, :scope => [:politwoops]), :previous_label => t(:previous, :scope => [:politwoops]) %>
     </div>
   </div>
 

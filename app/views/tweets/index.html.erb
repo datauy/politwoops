@@ -28,9 +28,9 @@
 <% if @tweets.empty? %>
   No hay resultados para tu búsqueda.
 <% else %>
-<%= render :partial => "tweets/tweet", :collection => @tweets, :object => :tweet %>
+<%= render :partial => "tweets/tweet", collection: @tweets, object: :tweet %>
 <% end %>
-<%= render :template => "shared/pager" %>
+<%= render :template => "shared/pager", locals: { collection: @tweets } %>
 
 <%= render :template => "shared/screenshotbox" %>
 

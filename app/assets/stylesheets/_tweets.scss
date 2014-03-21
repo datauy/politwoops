@@ -1,3 +1,16 @@
+@mixin avatar_layout {
+  .avatar {
+    a {
+      img.politician-party {
+        text-align: right;
+        position: relative;
+        left: 55px;
+        bottom: 8px;
+      }
+    }
+  }
+}
+
 .main-content {
   .container-fluid {
 
@@ -54,16 +67,7 @@
         }
       }
 
-      .avatar {
-        a {
-          img.politician-party {
-            text-align: right;
-            position: relative;
-            left: 55px;
-            bottom: 8px;
-          }
-        }
-      }
+      @include avatar_layout;
 
       .gray-box {
         width: 115px;

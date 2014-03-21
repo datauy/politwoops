@@ -27,4 +27,4 @@
 </div>
 <% end %>
 
-<%= render :template => "shared/pager" %>
+<%= render :template => "shared/pager", locals: { collection: @politicians } %>

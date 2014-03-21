@@ -1,3 +1,18 @@
+@mixin tweets_statistics {
+  .tweets-statistics {
+    font-size: 16px;
+    font-weight: bold;
+
+    .written {
+      color: $black;
+    }
+
+    .deleted {
+      color: $red;
+    }
+  }
+}
+
 .by-party {
   .section {
     .group-count {
@@ -44,17 +59,14 @@
       }
     }
 
-    .tweets-statistics {
-      font-size: 16px;
-      font-weight: bold;
+    @include tweets_statistics;
+  }
+}
 
-      .written {
-        color: $black;
-      }
 
-      .deleted {
-        color: $red;
-      }
-    }
+.by-politician {
+  .section {
+    @include avatar_layout;
+    @include tweets_statistics;
   }
 }

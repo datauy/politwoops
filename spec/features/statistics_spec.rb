@@ -22,15 +22,23 @@ describe 'politicians' do
         end
       end
     end
+
+    visit '/statistics'
   end
 
   it 'should see "Estadísticas por partido"' do
-    visit '/statistics'
-
     find('.by-party h2.statistics-by-party').text.should eq 'Estadísticas por partido/gobierno'
     all('.by-party .section').count.should eq 3
     first('.by-party .section .group-count').text.should eq '10 cuentas monitoreadas'
     first('.by-party .section .tweets-statistics .written').text.should eq '30 tweets'
     first('.by-party .section .tweets-statistics .deleted').text.should eq '10 borrados (33.33%)'
+  end
+
+  it 'should see "Estadísticas por partido"' do
+    find('.by-politician h2.statistics-by-politician').text.should eq 'Estadísticas por cuenta'
+    all('.by-politician .section').count.should eq 10
+    first('.by-politician .section .tweets-statistics .written').text.should eq '3 tweets'
+    first('.by-politician .section .tweets-statistics .deleted').text.should eq '1 borrados (33.33%)'
+    all('.pagination-pager #pager .pagination a').count.should eq 3
   end
 end
