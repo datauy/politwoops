@@ -30,8 +30,8 @@ class Politician < ActiveRecord::Base
   scope :active, conditions: ["status = 1 OR status = 4"]
   scope :collecting, conditions: { status: [CollectingAndShowing, CollectingNotShowing] }
   scope :showing, conditions: { status: [NotCollectingOrShowing, NotCollectingButShowing] }
-  scope :male, conditions: { gender: 'M' }
-  scope :female, conditions: { gender: 'F' }
+  scope :male, conditions: { gender: 'H' }
+  scope :female, conditions: { gender: 'M' }
   
   validates :user_name, uniqueness: { case_sensitive: false }
   validates :user_name, presence: true

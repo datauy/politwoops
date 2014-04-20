@@ -1,5 +1,6 @@
 class Admin::TweetsController < Admin::AdminController
   before_filter :load_tweet, :only => [:review, :message, :is_hit, :id_tweet]
+  include ApplicationHelper
 
   # list either unreviewed
   def index
@@ -40,11 +41,11 @@ class Admin::TweetsController < Admin::AdminController
     if ["Aprobar", "Desaprobar"].include?(params[:commit])
       approved = (params[:commit] == "Aprobar")
 
-      if !@tweet.reviewed? and approved and review_message.blank?
-        flash[@tweet.id] = "No olvides incluir una nota con el porque apruebas el tweet."
-        redirect_to params[:return_to]
-        return false
-      end
+      #if !@tweet.reviewed? and approved and review_message.blank?
+      #  flash[@tweet.id] = "No olvides incluir una nota con el porque apruebas el tweet."
+      #  redirect_to params[:return_to]
+      #  return false
+      #end
 
       @tweet.approved = approved
       @tweet.reviewed = true

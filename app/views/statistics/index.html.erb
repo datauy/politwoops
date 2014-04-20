@@ -17,12 +17,15 @@
         <div class="row gender-detail">
           <div class="col-md-4">
             <div class="circle organization"></div><span>Organización</span>
+            <span class="statics-perc">(<%= party_distribution[:organization] %>%)</span>
           </div>
           <div class="col-md-4">
             <div class="circle female"></div><span>Mujeres</span>
+            <span class="statics-perc">(<%= party_distribution[:female] %>%)</span>
           </div>
           <div class="col-md-4">
             <div class="circle male"></div><span>Hombres</span>
+            <span class="statics-perc">(<%= party_distribution[:male] %>%)</span>
           </div>
         </div>
       </div>

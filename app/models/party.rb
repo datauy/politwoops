@@ -46,7 +46,7 @@ class Party < ActiveRecord::Base
 
     male = male_percentage(active_users)
     female = female_percentage(active_users)
-    organization = define_percentage(100 - male - female)
+    organization = define_percentage((100 - male - female))
 
     {
       male: male,
@@ -71,11 +71,11 @@ class Party < ActiveRecord::Base
   end
 
   def male_percentage(active_users)
-    define_percentage((active_users.male.count * 100) / active_users.count)
+    define_percentage((active_users.male.count.to_i * 100) / active_users.count.to_i)
   end
 
   def female_percentage(active_users)
-    define_percentage((active_users.female.count * 100) / active_users.count)
+    define_percentage((active_users.female.count.to_i * 100) / active_users.count.to_i)
   end
 
   def define_percentage(percentage)
