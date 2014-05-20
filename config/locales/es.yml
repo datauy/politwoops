@@ -7,6 +7,7 @@ es:
 
   datetime:
     distance_in_words:
+      x_months: "%{count} meses"
       x_days: "%{count} días"
       x_hours: "%{count} horas"
       about_x_hours: "cerca de %{count} horas"
@@ -18,7 +19,7 @@ es:
         other: "a las %{count} horas"
 
   politwoops:
-    slogan: "Tweets borrados por los politicos" 
+    slogan: "Tweets borrados por los politicos"
     login: "Registro"
     logout: "Salida"
     menu: "menu"
@@ -65,7 +66,7 @@ es:
       search_label: "Buscar un usuario de twitter"
       success_update: "Este politico fue anadido exitosamente al grupo"
       no_users_found: "Lo lamentamos, no encontraos nada. Intente de vuelta."
-      
+
     pages:
       errors_explanation:
         one: "1 error prohibido impedi salvar este grupo:"
@@ -149,10 +150,10 @@ es:
       require_no_user: "Salga para ver esta pagina"
       success_create: "Este usuario se ha creado con exito"
       success_update: "Este usuario se ha actualizado"
-    
+
     twitter:
       retweet_notice: "Mira! @%{politician} borro un tweet! %{tweet_url}"
-  
+
   #activerecord:
   #errors:
   #  template:
