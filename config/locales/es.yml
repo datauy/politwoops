@@ -10,6 +10,7 @@ es:
       x_months: "%{count} meses"
       x_days: "%{count} días"
       x_hours: "%{count} horas"
+      x_minutes: "%{count} minutos"
       about_x_hours: "cerca de %{count} horas"
       less_than_x_minutes:
         one: "al minuto"
